@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  PLACEHOLDERS — search for "[" to find and replace each one:
+    [Your Studio Name]        brand name (header, hero, footer, page title)
+    [Your Studio Name 中文名]   optional Chinese brand name (hero seal)
+    [Live date & time — Coming soon]   next livestream date/time + time zone
+    [TikTok Live link]        href="#" on the TikTok button
+    [Instagram link]          href="#" on the Instagram button
+    [Facebook link]           href="#" on the Facebook button
+    [WhatsApp link]           href="#" on WhatsApp buttons (e.g. https://wa.me/<number>)
+    [your@email.com]          contact email (mailto link)
+    [Your City / Region]      studio location line in the footer
+    [Year]                    copyright year
+    [Placeholder date]        LIVE_START constant in the <script> (ISO 8601 with time zone) drives
+                              the countdown; currently a placeholder set ~7 days after build.
+  Gallery data: PIECES list in the script (set show:false to hide a piece).
+  Prices are intentionally NOT shown. All "Inquire" buttons open the
+  contact section; point them at WhatsApp/email when links are ready.
+  Images live in ./images/ (01-…08-*.jpg). No build step, no CDN.
+  Motion effects adapted from Motion Prompt (MIT) — https://showheyohtaki.github.io/motion-prompt/
+  #002 stagger · #005 mask reveal · #073 parallax scrolling · #074 fade-in on scroll ·
+  #079 scroll progress bar · #082 image zoom on hover · #084 magnetic button ·
+  #093 smooth scroll · #094 marquee · #146 scroll text reveal · #149 hide-on-scroll header ·
+  #153 3D tilt on hover · #162 lightbox · #167 scroll-down cue · #118 film grain ·
+  #027 dolly-in / #028 zoom-in + #025 pan (Ken Burns on hero & gallery) · #152 zoom on scroll (craft) ·
+  #045 wipe (section image reveals) · #044 cross dissolve (lightbox next/prev) ·
+  #097 backlighting (hero haze) · #098 rim light (gallery hover) · #154 spotlight hover ·
+  #112 vignette (hero) · #119 light leak + light sweep (live section) · #086 underline animation
+  ============================================================
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>[Your Studio Name] — Hand-Painted Fengxiang Clay Sculptures</title>
+<meta name="description" content="Hand-painted clay sculptures in the Fengxiang folk-art tradition of Shaanxi, China. Auspicious zodiac animals, molded and painted by hand.">
+<meta property="og:title" content="[Your Studio Name] — Hand-Painted Clay from the Heart of Ancient China">
+<meta property="og:description" content="Fengxiang painted clay: auspicious animals, molded and painted by hand in Shaanxi, China.">
+<meta property="og:image" content="images/04-charging-ox.jpg">
+<meta name="theme-color" content="#14110f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#14110f; --ink-2:#1d1915; --paper:#f4eee4; --paper-2:#ebe2d3;
+  --red:#b8231b; --red-2:#d8382c; --gold:#c9a14a; --muted:#8b8073; --line:rgba(20,17,15,.14);
+  --serif:"Cormorant Garamond","Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --sans:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --pad:clamp(20px,5vw,72px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit}
+.wrap{max-width:1320px;margin:0 auto;padding:0 var(--pad)}
+.eyebrow{font:600 12px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--red)}
+.ph{background:rgba(201,161,74,.18);outline:1px dashed rgba(201,161,74,.7);outline-offset:2px;border-radius:3px;padding:0 .2em}
+
+/* #079 scroll progress bar */
+.progress{position:fixed;top:0;left:0;height:3px;width:100%;background:var(--red-2);transform-origin:0 50%;transform:scaleX(0);z-index:60}
+
+/* #149 hide-on-scroll header */
+.header{position:fixed;inset:0 0 auto 0;z-index:50;transition:transform .45s var(--ease),background .3s,color .3s;color:var(--paper)}
+.header.solid{background:rgba(20,17,15,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.header.hide{transform:translateY(-100%)}
+.header .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font:600 20px/1 var(--serif);letter-spacing:.02em;text-decoration:none}
+.nav{display:flex;gap:28px;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+.nav a{text-decoration:none;position:relative;padding:4px 0}
+/* #086-style underline grow */
+.nav a::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:100%;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ease)}
+.nav a:hover::after{transform:scaleX(1)}
+.nav .cta{border:1px solid rgba(244,238,228,.5);padding:8px 14px;border-radius:99px}
+.nav .cta::after{display:none}
+@media(max-width:760px){.nav a:not(.cta){display:none}}
+
+/* HERO */
+.hero{position:relative;min-height:100svh;background:var(--ink);color:var(--paper);overflow:hidden;display:flex;align-items:center}
+.hero-bg{position:absolute;inset:-8% 0 -8% 0;will-change:transform}
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:60% 45%;opacity:.85}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(20,17,15,.92) 0%,rgba(20,17,15,.65) 42%,rgba(20,17,15,.1) 75%),linear-gradient(0deg,rgba(20,17,15,.85),transparent 40%)}
+.hero .wrap{position:relative;z-index:2;width:100%;padding-top:110px;padding-bottom:110px}
+.hero h1{font:500 clamp(42px,7.2vw,108px)/.98 var(--serif);letter-spacing:-.015em;margin:22px 0 26px}
+.hero h1 em{font-style:italic;color:var(--red-2)}
+.hero p.lead{max-width:440px;color:rgba(244,238,228,.78);font-size:clamp(15px,1.3vw,17px)}
+.hero .actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
+.seal{position:absolute;right:var(--pad);bottom:110px;z-index:2;writing-mode:vertical-rl;font:600 15px/1.4 var(--serif);letter-spacing:.3em;color:var(--paper);border:1.5px solid var(--red-2);background:rgba(184,35,27,.85);padding:14px 8px;border-radius:3px}
+/* #005 mask reveal */
+.mask{display:block;overflow:hidden;padding-bottom:.06em}
+.mask>span{display:block;transform:translateY(105%);transition:transform 1.1s var(--ease)}
+.loaded .mask>span{transform:none}
+.mask:nth-child(2)>span{transition-delay:.12s}.mask:nth-child(3)>span{transition-delay:.24s}
+.fade-up{opacity:0;transform:translateY(20px);transition:opacity .9s var(--ease) .5s,transform .9s var(--ease) .5s}
+.loaded .fade-up{opacity:1;transform:none}
+/* #167 scroll-down cue */
+.cue{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:rgba(244,238,228,.6);text-decoration:none}
+.cue i{width:1px;height:42px;background:linear-gradient(rgba(244,238,228,.7),rgba(244,238,228,0));animation:cue 2s var(--ease) infinite;transform-origin:top}
+@keyframes cue{0%{transform:scaleY(0)}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* Buttons + #084 magnetic */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 26px;border-radius:99px;font:600 13px/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;text-decoration:none;cursor:pointer;border:1px solid transparent;transition:background .3s,color .3s,border-color .3s;will-change:transform}
+.btn-red{background:var(--red);color:#fff}.btn-red:hover{background:var(--red-2)}
+.btn-ghost{border-color:rgba(244,238,228,.45);color:var(--paper)}.btn-ghost:hover{background:var(--paper);color:var(--ink)}
+.btn-dark{background:var(--ink);color:var(--paper)}.btn-dark:hover{background:var(--red)}
+
+/* #094 marquee */
+.marquee{background:var(--red);color:var(--paper);overflow:hidden;white-space:nowrap;padding:16px 0;font:500 clamp(18px,2vw,26px)/1 var(--serif);font-style:italic}
+.marquee-track{display:inline-flex;animation:marquee 32s linear infinite}
+.marquee span{padding:0 28px}.marquee b{font-style:normal;color:var(--gold);font-weight:500}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* sections */
+section{position:relative}
+.sec{padding:clamp(80px,11vw,150px) 0}
+.sec-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:clamp(36px,5vw,64px);flex-wrap:wrap}
+.sec h2{font:500 clamp(36px,5vw,68px)/1.02 var(--serif);letter-spacing:-.01em;margin-top:14px}
+.sec h2 em{color:var(--red);font-style:italic}
+
+/* craft */
+.craft-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(36px,6vw,96px);align-items:center}
+.statement{font:500 clamp(26px,3.1vw,42px)/1.22 var(--serif);margin:18px 0 28px}
+/* #146 scroll text reveal */
+.statement .ch{color:rgba(20,17,15,.16);transition:color .25s linear}
+.statement .ch.on{color:var(--ink)}
+.craft-copy p{color:#4b433b;max-width:560px;margin-bottom:16px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px;border-top:1px solid var(--line);padding-top:26px}
+.steps h3{font:600 22px/1.1 var(--serif);margin:8px 0 6px}
+.steps p{font-size:14px;color:var(--muted);margin:0}
+.steps .n{font:600 12px var(--sans);color:var(--red);letter-spacing:.15em}
+.craft-media{position:relative;aspect-ratio:4/5;border-radius:4px;overflow:hidden;background:var(--paper-2)}
+.craft-media img{width:100%;height:118%;object-fit:cover;will-change:transform}
+.craft-media figcaption{position:absolute;left:16px;bottom:14px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.symbols{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:clamp(60px,8vw,110px)}
+.symbols div{background:var(--paper);padding:26px 22px}
+.symbols h4{font:600 24px/1 var(--serif);margin-bottom:8px}
+.symbols h4 small{font:500 12px var(--sans);color:var(--red);letter-spacing:.15em;margin-left:8px;text-transform:uppercase}
+.symbols p{font-size:14px;color:var(--muted)}
+
+/* gallery */
+.gallery{background:var(--ink);color:var(--paper)}
+.gallery .sec-head p{max-width:380px;color:rgba(244,238,228,.65)}
+.gallery .sec h2 em,.gallery h2 em{color:var(--red-2)}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(18px,2.4vw,34px)}
+.card{grid-column:span 4;perspective:900px}
+.card.wide{grid-column:span 8}.card.q{grid-column:span 3}.card.q .meta{flex-direction:column;gap:12px}.card.q .inq{align-self:flex-start}
+.card-inner{position:relative;height:100%;display:flex;flex-direction:column;transform-style:preserve-3d;transition:transform .4s var(--ease)}
+.frame{position:relative;overflow:hidden;border-radius:4px;background:#0d0b0a;aspect-ratio:4/5;cursor:zoom-in;flex:1}
+.card.wide .frame{aspect-ratio:16/10}
+.frame img{width:100%;height:100%;object-fit:cover;transition:transform 1.1s var(--ease)}
+/* #082 image zoom on hover */
+.card:hover .frame img{transform:scale(1.07)}
+.glare{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .4s;background:radial-gradient(260px circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.28),transparent 60%)}
+.card:hover .glare{opacity:1}
+.zoom-hint{position:absolute;right:12px;top:12px;width:36px;height:36px;border-radius:50%;background:rgba(20,17,15,.55);display:grid;place-items:center;opacity:0;transition:opacity .3s}
+.card:hover .zoom-hint{opacity:1}
+.meta{display:flex;justify-content:space-between;align-items:start;gap:16px;padding:18px 2px 4px}
+.meta h3{font:500 clamp(22px,2vw,28px)/1.1 var(--serif)}
+.meta .no{font:600 11px var(--sans);letter-spacing:.2em;color:var(--gold);display:block;margin-bottom:6px}
+.meta p{font-size:14px;color:rgba(244,238,228,.62);margin-top:6px;max-width:44ch}
+.inq{flex:none;min-height:40px;padding:0 16px;font-size:11px;border:1px solid rgba(244,238,228,.35);color:var(--paper);background:transparent}
+.inq:hover{background:var(--red);border-color:var(--red)}
+/* #074 fade-in on scroll + #002 stagger */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.33,1,.68,1),transform .7s cubic-bezier(.33,1,.68,1);transition-delay:var(--d,0s)}
+.reveal.in{opacity:1;transform:none}
+
+/* live */
+.live{background:var(--paper-2);overflow:hidden}
+.live-box{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,5vw,80px);align-items:center}
+.live-media{position:relative;aspect-ratio:1/1;max-width:560px}
+.live-media .ph-img{position:absolute;border-radius:4px;overflow:hidden;box-shadow:0 30px 60px -30px rgba(20,17,15,.45)}
+.live-media .a{inset:0 22% 18% 0}.live-media .b{inset:38% 0 0 46%;border:6px solid var(--paper-2)}
+.live-media img{width:100%;height:100%;object-fit:cover}
+.onair{position:absolute;left:16px;top:16px;z-index:3;display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;font:600 11px var(--sans);letter-spacing:.2em;padding:8px 12px;border-radius:99px}
+.onair i{width:8px;height:8px;border-radius:50%;background:#fff;animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.25}}
+.live p{color:#4b433b;max-width:520px}
+.when{display:flex;gap:14px;align-items:center;margin:26px 0;padding:16px 18px;border:1px solid var(--line);border-radius:6px;background:var(--paper);max-width:460px}
+.when svg{flex:none;color:var(--red)}
+.when strong{display:block;font:600 20px/1.2 var(--serif)}
+.when span{font-size:13px;color:var(--muted)}
+.perks{list-style:none;margin:0 0 28px;display:grid;gap:8px}
+.perks li{padding-left:22px;position:relative;font-size:15px}
+.perks li::before{content:"";position:absolute;left:0;top:.6em;width:10px;height:10px;background:var(--red);transform:rotate(45deg)}
+.socials{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:460px}
+.social{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:8px;background:var(--ink);color:var(--paper);text-decoration:none;font:600 14px var(--sans);transition:background .3s,transform .3s var(--ease)}
+.social:hover{background:var(--red);transform:translateY(-3px)}
+.social svg{flex:none}
+.social small{display:block;font:500 11px var(--sans);opacity:.6;letter-spacing:.04em}
+
+/* contact / footer */
+.contact{background:var(--ink);color:var(--paper);text-align:center}
+.contact h2{max-width:14ch;margin:16px auto 22px}
+.contact p{color:rgba(244,238,228,.7);max-width:520px;margin:0 auto 34px}
+.contact .actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+footer{background:var(--ink);color:rgba(244,238,228,.5);font-size:13px;border-top:1px solid rgba(244,238,228,.1)}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-top:26px;padding-bottom:calc(26px + env(safe-area-inset-bottom))}
+footer .logo{color:var(--paper)}
+
+/* #162 lightbox */
+.lb{position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:rgba(14,12,10,0);pointer-events:none;visibility:hidden;transition:background .45s var(--ease),visibility 0s .45s}
+.lb.open{background:rgba(14,12,10,.9);pointer-events:auto;visibility:visible;transition:background .45s var(--ease)}
+.lb figure{max-width:min(92vw,1100px);max-height:86svh;opacity:0;transform:scale(.92);transition:opacity .45s var(--ease),transform .45s var(--ease);text-align:center}
+.lb.open figure{opacity:1;transform:none}
+.lb img{max-width:100%;max-height:76svh;margin:0 auto;border-radius:4px;object-fit:contain}
+.lb figcaption{color:var(--paper);margin-top:14px;font:500 20px var(--serif)}
+.lb figcaption span{display:block;font:500 12px var(--sans);letter-spacing:.2em;color:var(--gold);margin-top:4px}
+.lb button{position:absolute;background:rgba(244,238,228,.1);color:var(--paper);border:0;width:48px;height:48px;border-radius:50%;cursor:pointer;font-size:22px;display:grid;place-items:center}
+.lb button:hover{background:var(--red)}
+.lb .x{top:18px;right:18px}.lb .prev{left:18px;top:50%;transform:translateY(-50%)}.lb .next{right:18px;top:50%;transform:translateY(-50%)}
+
+/* #118 subtle film grain */
+.grain{position:fixed;inset:0;pointer-events:none;z-index:70;opacity:.06;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+
+
+/* Ken Burns: #027 dolly-in / #028 zoom-in + #025 pan */
+.kb{position:absolute;inset:0;overflow:hidden}
+.kb img,.kb picture{width:100%;height:100%;display:block}
+.kb img{object-fit:cover}
+.kb-hero img{object-position:55% 50%;animation:kbHero 22s cubic-bezier(.45,0,.55,1) infinite alternate;opacity:.9}
+@keyframes kbHero{from{transform:scale(1.04) translateX(0)}to{transform:scale(1.16) translateX(-2.5%)}}
+.frame .kb img{animation:kbCard 16s cubic-bezier(.45,0,.55,1) infinite alternate;animation-play-state:paused}
+.card.in .frame .kb img{animation-play-state:running}
+.card:nth-child(2n) .frame .kb img{animation-direction:alternate-reverse}
+@keyframes kbCard{from{transform:scale(1.02) translate(0,0)}to{transform:scale(1.09) translate(-1.5%,-1%)}}
+.frame .kb{transition:transform 1.1s var(--ease)}
+.card:hover .frame .kb{transform:scale(1.06)}
+/* #097 backlighting haze + #112 vignette */
+.backlight{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(40% 50% at 68% 42%,rgba(255,190,110,.22),transparent 70%);mix-blend-mode:screen;animation:breathe 7s ease-in-out infinite alternate}
+@keyframes breathe{from{opacity:.55}to{opacity:1}}
+.hero::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;box-shadow:inset 0 0 220px 40px rgba(0,0,0,.55)}
+/* #154 spotlight hover + #098 rim light */
+.frame::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;padding:1px;background:radial-gradient(220px circle at var(--mx,-999px) var(--my,-999px),rgba(255,200,110,.9),transparent 70%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.glare{background:radial-gradient(240px circle at var(--gx,50%) var(--gy,50%),rgba(255,236,200,.30),transparent 62%)}
+.card:hover .frame{box-shadow:0 0 0 1px rgba(255,199,90,.55),0 0 34px -6px rgba(255,170,70,.55),0 30px 60px -30px rgba(0,0,0,.8)}
+.frame{transition:box-shadow .5s var(--ease)}
+/* #045 wipe reveal */
+.wipe{clip-path:inset(0 100% 0 0);transition:clip-path 1.1s cubic-bezier(.65,0,.35,1)}
+.wipe.in{clip-path:inset(0 0 0 0)}
+.craft-media img[data-dolly]{height:100%;transform-origin:50% 60%}
+/* light sweep + #119 light leak (live) */
+.sweep::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 35%,rgba(255,240,215,.38) 50%,transparent 65%);transform:translateX(-120%);animation:sweep 5.5s cubic-bezier(.65,0,.35,1) infinite}
+.ph-img.b.sweep::after{animation-delay:.6s}
+@keyframes sweep{0%,55%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+.live::before{content:"";position:absolute;top:-20%;left:-10%;width:60%;height:80%;pointer-events:none;background:radial-gradient(closest-side,rgba(216,56,44,.16),rgba(201,161,74,.10) 55%,transparent);filter:blur(10px);animation:leak 12s ease-in-out infinite alternate}
+@keyframes leak{to{transform:translate(18%,12%)}}
+.live .wrap{position:relative}
+/* countdown */
+.countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:460px;margin:-8px 0 26px}
+.countdown div{background:var(--ink);color:var(--paper);border-radius:6px;padding:12px 4px;text-align:center}
+.countdown b{display:block;font:500 clamp(28px,3vw,36px)/1 var(--serif);font-variant-numeric:tabular-nums}
+.countdown span{font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:.6}
+.live-now{display:flex;align-items:center;gap:12px;font:600 18px var(--serif);margin:-8px 0 26px}
+/* share */
+.share-mini{background:transparent;border:1px solid rgba(244,238,228,.5);color:inherit;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;cursor:pointer}
+.share-mini:hover{background:var(--red);border-color:var(--red)}
+.nav{align-items:center}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:var(--ink);color:var(--paper);padding:12px 18px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s var(--ease);z-index:90}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+/* lightbox shared-element ghost */
+.lb-ghost{position:fixed;z-index:85;object-fit:cover;border-radius:4px;pointer-events:none;transition:all .5s cubic-bezier(.33,1,.68,1)}
+.lb img.dissolve{animation:dissolve .5s cubic-bezier(.45,0,.55,1)}
+@keyframes dissolve{from{opacity:0}to{opacity:1}}
+.card.wide .frame{aspect-ratio:2.1/1}
+.card:not(.wide) .frame{aspect-ratio:1/1}
+
+/* responsive */
+@media(max-width:980px){
+  .card,.card.q{grid-column:span 6}.card.wide{grid-column:span 12}
+  .craft-grid,.live-box{grid-template-columns:1fr}
+  .symbols{grid-template-columns:repeat(2,1fr)}
+  .craft-media{aspect-ratio:4/3}
+}
+@media(max-width:600px){
+  .grid{grid-template-columns:1fr}
+  .card,.card.wide,.card.q{grid-column:auto}
+  .card.wide .frame{aspect-ratio:3/2}
+  .hero{align-items:flex-end;min-height:0;flex-direction:column}
+  .hero-bg{position:relative;inset:auto;width:100%;height:100vw;flex:none}
+  .hero .wrap{padding-top:0;padding-bottom:56px;margin-top:-90px}
+  .backlight{display:none}
+  .hero::after{background:linear-gradient(0deg,rgba(20,17,15,1) 0%,rgba(20,17,15,1) calc(100% - 100vw + 60px),rgba(20,17,15,.2) calc(100% - 40vw),rgba(20,17,15,.35) 100%)}
+  .kb-hero img{object-position:50% 55%}
+  .countdown{gap:6px}
+  .nav{gap:10px}
+  .hero .actions .btn{flex:1 1 100%}
+  .seal,.cue{display:none}
+  .hero .eyebrow{letter-spacing:.14em;line-height:1.5}
+  .hero h1 .mask{padding-bottom:.1em}
+  .steps{grid-template-columns:1fr;gap:14px}
+  .symbols div{padding:20px 16px}
+  .socials{grid-template-columns:1fr 1fr}
+  .social{padding:12px;font-size:13px;gap:8px}
+  .meta{flex-direction:column;gap:12px}
+  .inq{align-self:flex-start}
+  .live-media{aspect-ratio:1/1.05}
+  .lb .prev,.lb .next{top:auto;bottom:18px;transform:none}
+}
+@media(hover:none){.zoom-hint{opacity:1}}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .mask>span,.fade-up,.reveal{transform:none!important;opacity:1!important}
+  .statement .ch{color:var(--ink)!important}
+  .grain{display:none}
+  .wipe{clip-path:none!important}
+  .kb img{animation:none!important;transform:none!important}
+}
+</style>
+</head>
+<body>
+<div class="progress" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="header" id="top">
+  <div class="wrap">
+    <a href="#hero" class="logo">[Your Studio Name]</a>
+    <nav class="nav" aria-label="Main">
+      <a href="#craft">The Craft</a>
+      <a href="#collection">Collection</a>
+      <a href="#live">Live</a>
+      <button type="button" class="share share-mini" aria-label="Share this page"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
+      <a href="#contact" class="cta">Inquire</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="hero">
+  <div class="hero-bg" data-parallax="0.25"><div class="kb kb-hero"><picture><source media="(max-width:600px)" srcset="images/01-crimson-horse.jpg"><img src="images/04-charging-ox.jpg" alt="Hand-painted red Fengxiang clay ox" fetchpriority="high"></picture></div></div><div class="backlight" aria-hidden="true"></div>
+  <div class="wrap">
+    <span class="eyebrow fade-up" style="color:var(--gold)">Fengxiang Painted Clay · Shaanxi, China</span>
+    <h1><span class="mask"><span>Hand-Painted Clay</span></span><span class="mask"><span>from the Heart of</span></span><span class="mask"><span><em>Ancient China</em></span></span></h1>
+    <p class="lead fade-up">Auspicious animals, pressed from clay and painted by hand in the centuries-old folk tradition of Fengxiang — made by <strong>[Your Studio Name]</strong> for homes around the world.</p>
+    <div class="actions fade-up">
+      <a href="#collection" class="btn btn-red magnetic">View the Collection</a>
+      <a href="#live" class="btn btn-ghost magnetic">Join Our Live</a>
+    </div>
+  </div>
+  <div class="seal" aria-hidden="true">[Your Studio Name 中文名]</div>
+  <a class="cue" href="#craft" aria-label="Scroll down"><span>Scroll</span><i></i></a>
+</section>
+
+<div class="marquee" aria-hidden="true"><div class="marquee-track">
+  <span>Hand-molded clay</span><b>✦</b><span>Painted by hand</span><b>✦</b><span>Fengxiang folk art</span><b>✦</b><span>Luck · Strength · Prosperity</span><b>✦</b><span>Shipped worldwide</span><b>✦</b>
+  <span>Hand-molded clay</span><b>✦</b><span>Painted by hand</span><b>✦</b><span>Fengxiang folk art</span><b>✦</b><span>Luck · Strength · Prosperity</span><b>✦</b><span>Shipped worldwide</span><b>✦</b>
+</div></div>
+
+<section class="sec" id="craft">
+  <div class="wrap">
+    <div class="craft-grid">
+      <div class="craft-copy">
+        <span class="eyebrow reveal">The Craft</span>
+        <p class="statement" data-scroll-text>A folk art passed down for generations in Fengxiang, Shaanxi — where clay is shaped into guardians of good fortune.</p>
+        <p class="reveal">Fengxiang painted clay (凤翔泥塑) is one of China's best-loved folk arts, made for centuries in the villages around Baoji in Shaanxi province — the ancient heartland of Chinese civilisation. It is recognised as part of China's national intangible cultural heritage.</p>
+        <p class="reveal">Each piece is pressed from local clay in hand-made molds, dried, coated in white, then outlined in black ink and painted in bold reds, greens, yellows and gold. The result is unmistakable: round, joyful forms and patterns of flowers and clouds that carry wishes for a good life.</p>
+        <div class="steps">
+          <div class="reveal" style="--d:0s"><span class="n">01</span><h3>Molded</h3><p>Local clay pressed into hand-carved molds and joined by hand.</p></div>
+          <div class="reveal" style="--d:.12s"><span class="n">02</span><h3>Outlined</h3><p>A white base, then fine black ink lines drawn with a brush.</p></div>
+          <div class="reveal" style="--d:.24s"><span class="n">03</span><h3>Painted</h3><p>Vivid colours and gold added by hand, so no two are identical.</p></div>
+        </div>
+      </div>
+      <figure class="craft-media wipe"><img src="images/06-blossom-horse.jpg" alt="White painted clay horse with a red flower" data-dolly loading="lazy"><figcaption>Blossom Horse — hand-painted detail</figcaption></figure>
+    </div>
+    <div class="symbols">
+      <div class="reveal" style="--d:0s"><h4>Horse<small>马</small></h4><p>Success and swift progress — "may success arrive at once."</p></div>
+      <div class="reveal" style="--d:.1s"><h4>Ox<small>牛</small></h4><p>Strength, diligence and steady prosperity.</p></div>
+      <div class="reveal" style="--d:.2s"><h4>Ram<small>羊</small></h4><p>Gentleness, harmony and auspicious blessings.</p></div>
+      <div class="reveal" style="--d:.3s"><h4>Dog<small>狗</small></h4><p>Loyalty, protection and a lucky, safe home.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec gallery" id="collection">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow reveal" style="color:var(--gold)">The Collection</span><h2 class="reveal">Eight pieces, <em>each painted by hand</em></h2></div>
+      <p class="reveal">Tap any piece to view it large. Every sculpture is made to order or in small batches — ask us about sizes, colours and shipping.</p>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<section class="sec live" id="live">
+  <div class="wrap live-box">
+    <div class="live-media wipe">
+      <span class="onair"><i></i>LIVE</span>
+      <div class="ph-img a sweep"><img src="images/05-little-red-horse.jpg" alt="Little red clay horse" loading="lazy"></div>
+      <div class="ph-img b sweep"><img src="images/02-golden-horn-ram.jpg" alt="Golden-horned clay ram" loading="lazy"></div>
+    </div>
+    <div>
+      <span class="eyebrow reveal">Join Our Live</span>
+      <h2 class="reveal" style="font:500 clamp(36px,5vw,68px)/1.02 var(--serif);margin-top:14px">Watch the colours <em style="color:var(--red);font-style:italic">come alive</em></h2>
+      <p class="reveal" style="margin-top:18px">Meet the artisans, see pieces painted in real time, ask anything about the craft and the meaning of each animal — and be first to see new work.</p>
+      <div class="when reveal">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        <div><strong>[Live date &amp; time — Coming soon]</strong><span>Follow us to get notified when we go live</span></div>
+      </div>
+      <div class="countdown reveal" id="countdown" aria-live="polite">
+        <div><b data-u="d">00</b><span>Days</span></div><div><b data-u="h">00</b><span>Hours</span></div><div><b data-u="m">00</b><span>Min</span></div><div><b data-u="s">00</b><span>Sec</span></div>
+      </div>
+      <p class="live-now" id="liveNow" hidden><span class="onair" style="position:static"><i></i>LIVE</span> We're live now — join us!</p>
+      <ul class="perks reveal"><li>Live painting demonstrations</li><li>Q&amp;A on Fengxiang folk art</li><li>First look at new pieces</li></ul>
+      <div class="socials">
+        <a class="social reveal" style="--d:0s" href="#" data-ph="[TikTok Live link]"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.2v12.4a2.6 2.6 0 1 1-2.6-2.6c.3 0 .5 0 .8.1V9.6a5.9 5.9 0 1 0 5 5.8V9.1a7.4 7.4 0 0 0 4.3 1.4V7.3a4.3 4.3 0 0 1-3.2-1.5z"/></svg><span>TikTok Live<small>[TikTok Live link]</small></span></a>
+        <a class="social reveal" style="--d:.08s" href="#" data-ph="[Instagram link]"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg><span>Instagram<small>[Instagram link]</small></span></a>
+        <a class="social reveal" style="--d:.16s" href="#" data-ph="[Facebook link]"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.5 1.6-1.5h1.7V4.4a22 22 0 0 0-2.5-.1c-2.5 0-4.1 1.5-4.1 4.2v2.3H7.4V14h2.8v8z"/></svg><span>Facebook<small>[Facebook link]</small></span></a>
+        <a class="social reveal" style="--d:.24s" href="#" data-ph="[WhatsApp link]"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg><span>WhatsApp<small>[WhatsApp link]</small></span></a>
+      </div>
+      <button class="btn btn-dark share magnetic reveal" type="button" style="margin-top:16px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg><span>Share this page</span></button>
+    </div>
+  </div>
+</section>
+
+<section class="sec contact" id="contact">
+  <div class="wrap">
+    <span class="eyebrow reveal" style="color:var(--gold)">Inquire</span>
+    <h2 class="reveal" style="font:500 clamp(36px,5vw,68px)/1.02 var(--serif)">Bring a piece of <em style="color:var(--red-2);font-style:italic">ancient luck</em> home</h2>
+    <p class="reveal">For availability, sizes, custom colours, gifts or wholesale, send us a message. We reply personally and ship worldwide.</p>
+    <div class="actions reveal">
+      <a class="btn btn-red magnetic" href="#" data-ph="[WhatsApp link]">Message on WhatsApp</a>
+      <a class="btn btn-ghost magnetic" href="mailto:[your@email.com]">Email [your@email.com]</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span><a href="#hero" class="logo">[Your Studio Name]</a> &nbsp;·&nbsp; Fengxiang painted clay · [Your City / Region], Shaanxi, China</span>
+    <span>© [Year] [Your Studio Name]. Handmade — colours and details vary slightly between pieces.</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Image viewer" aria-hidden="true">
+  <button class="x" aria-label="Close">×</button>
+  <button class="prev" aria-label="Previous">‹</button>
+  <button class="next" aria-label="Next">›</button>
+  <figure><img alt=""><figcaption></figcaption></figure>
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  // ===== PIECES: set show:true once the photo is in images/ =====
+  var PIECES = [
+    {img:'04-charging-ox.jpg', t:'Charging Ox', d:'Head lowered and horns forward, this large ox is lacquered in rich red and covered in black-outlined peonies, scrolls and white dot-work. Strength, diligence and lasting prosperity.', c:'wide', show:true},
+    {img:'01-crimson-horse.jpg', t:'Crimson Horse', d:'A large, glossy red horse with a flowing black mane, bold swirling scrolls and fine peony patterns — a symbol of swift success.', show:true},
+    {img:'03-ink-horse.jpg', t:'Ink Horse', d:'The same proud form in white and black: dense ink-style scrolls, flowers and dot-work, graphic and timeless.', show:true},
+    {img:'02-golden-horn-ram.jpg', t:'Golden-Horn Ram', d:'Huge yellow curling horns dotted in pink and turquoise, a magenta beard, green and red body and pink peonies — harmony and auspicious blessings.', show:true},
+    {img:'08-fortune-horse.jpg', t:'Fortune Horse — Instant Wealth', d:'A round white horse carrying a gold ingot on a yellow saddle reading “马上有钱” — a playful wish that wealth arrives right away.', show:true},
+    {img:'05-little-red-horse.jpg', t:'Little Red Horse', d:'Glossy red with black brushwork, white dots and a large gold flower on its flank — a cheerful gift for luck and good beginnings.', show:true},
+    {img:'06-blossom-horse.jpg', t:'Blossom Horse', d:'Matte white clay with fine black linework, gold dots, a red sunburst flower and a red teardrop motif on its mane.', show:true},
+    {img:'07-lucky-black-dog.jpg', t:'Lucky Black Dog', d:'A black dog with yellow eyes, a yellow collar, white swirls and a big pink-red flower — a traditional guardian of a safe and happy home.', show:true}
+  ];
+  var pieces = PIECES.filter(function(p){ return p.show; });
+  var grid = document.getElementById('grid');
+  grid.innerHTML = pieces.map(function(p,i){
+    var n = ('0'+(i+1)).slice(-2);
+    return '<article class="card reveal '+(p.c||'')+'" style="--d:'+((i<2?i:((i-2)%3))*0.12)+'s"><div class="card-inner">'+
+      '<div class="frame" data-i="'+i+'" role="button" tabindex="0" aria-label="View '+p.t+' larger">'+
+      '<div class="kb"><img src="images/'+p.img+'" alt="'+p.t+' — hand-painted Fengxiang clay sculpture" loading="lazy"></div>'+
+      '<span class="glare"></span><span class="zoom-hint" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5M11 8v6M8 11h6"/></svg></span></div>'+
+      '<div class="meta"><div><span class="no">NO. '+n+'</span><h3>'+p.t+'</h3><p>'+p.d+'</p></div>'+
+      '<a class="btn inq" href="#contact" data-piece="'+p.t+'">Inquire</a></div>'+
+      '</div></article>';
+  }).join('');
+
+  // hero mask reveal
+  requestAnimationFrame(function(){ document.documentElement.classList.add('loaded'); document.body.classList.add('loaded'); });
+
+  // #074 fade-in on scroll (+ #002 stagger via --d)
+  var revealEls = document.querySelectorAll('.reveal');
+  if (reduce || !('IntersectionObserver' in window)) { revealEls.forEach(function(e){e.classList.add('in')}); }
+  else {
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); }, {rootMargin:'0px 0px -12% 0px'});
+    revealEls.forEach(function(e){ io.observe(e); });
+  }
+
+  // #146 scroll text reveal: split into chars
+  var st = document.querySelector('[data-scroll-text]');
+  var chars = [];
+  if (st && !reduce) {
+    var words = st.textContent.split(' ');
+    st.innerHTML = words.map(function(w){ return '<span style="white-space:nowrap">'+w.split('').map(function(c){return '<span class="ch">'+c+'</span>';}).join('')+'</span>'; }).join(' ');
+    chars = st.querySelectorAll('.ch');
+  }
+
+  // scroll loop: progress bar (#079), header (#149), parallax (#073), text reveal (#146)
+  var bar = document.querySelector('.progress'), header = document.querySelector('.header');
+  var par = document.querySelectorAll('[data-parallax]');
+  var lastY = window.scrollY, ticking = false;
+  function onScroll(){
+    var y = window.scrollY, h = document.documentElement.scrollHeight - innerHeight;
+    bar.style.transform = 'scaleX('+(h>0?y/h:0)+')';
+    header.classList.toggle('solid', y > 40);
+    header.classList.toggle('hide', y > lastY && y > 300);
+    lastY = y;
+    if (!reduce) {
+      par.forEach(function(el){
+        var r = el.parentElement.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > innerHeight) return;
+        var off = (r.top + r.height/2 - innerHeight/2) * parseFloat(el.dataset.parallax);
+        el.style.transform = 'translate3d(0,'+(-off).toFixed(1)+'px,0)';
+      });
+      if (chars.length) {
+        var r = st.getBoundingClientRect();
+        var p = Math.min(1, Math.max(0, (innerHeight*0.85 - r.top) / (innerHeight*0.55)));
+        var k = Math.floor(p * chars.length);
+        for (var i=0;i<chars.length;i++) chars[i].classList.toggle('on', i < k);
+      }
+    }
+    ticking = false;
+  }
+  addEventListener('scroll', function(){ if(!ticking){ requestAnimationFrame(onScroll); ticking = true; } }, {passive:true});
+  addEventListener('resize', onScroll); onScroll();
+
+  // #093 smooth scroll for in-page links
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('a[href^="#"]'); if(!a) return;
+    var id = a.getAttribute('href'); if (id.length < 2) { e.preventDefault(); return; }
+    var t = document.querySelector(id); if(!t) return;
+    e.preventDefault();
+    t.scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block:'start'});
+    if (a.dataset.piece) {
+      var p = document.querySelector('#contact p');
+      if (p) p.innerHTML = 'Interested in <strong>'+a.dataset.piece+'</strong>? Send us a message for availability, sizes and shipping — we reply personally.';
+    }
+  });
+
+  if (fine && !reduce) {
+    // #153 3D tilt on hover with glare
+    document.querySelectorAll('.card').forEach(function(card){
+      var inner = card.querySelector('.card-inner'), frame = card.querySelector('.frame');
+      card.addEventListener('mousemove', function(e){
+        var r = card.getBoundingClientRect();
+        var x = (e.clientX - r.left)/r.width*2-1, y = (e.clientY - r.top)/r.height*2-1;
+        inner.style.transform = 'rotateY('+(x*6)+'deg) rotateX('+(-y*6)+'deg)';
+        var fr = frame.getBoundingClientRect();
+        frame.style.setProperty('--gx', (e.clientX-fr.left)+'px'); frame.style.setProperty('--gy', (e.clientY-fr.top)+'px');
+      });
+      card.addEventListener('mouseleave', function(){ inner.style.transform = ''; });
+    });
+    // #084 magnetic buttons
+    document.querySelectorAll('.magnetic').forEach(function(b){
+      var tx=0,ty=0,cx=0,cy=0,raf=null,active=false;
+      function loop(){ cx += (tx-cx)*0.18; cy += (ty-cy)*0.18; b.style.transform='translate('+cx.toFixed(2)+'px,'+cy.toFixed(2)+'px)';
+        if (Math.abs(tx-cx)>.1||Math.abs(ty-cy)>.1||active) raf=requestAnimationFrame(loop); else raf=null; }
+      b.addEventListener('mousemove', function(e){ var r=b.getBoundingClientRect(); tx=(e.clientX-r.left-r.width/2)*0.35; ty=(e.clientY-r.top-r.height/2)*0.35; active=true; if(!raf) raf=requestAnimationFrame(loop); });
+      b.addEventListener('mouseleave', function(){ tx=0; ty=0; active=false; if(!raf) raf=requestAnimationFrame(loop); });
+    });
+  }
+
+
+  // ===== LIVE COUNTDOWN — set LIVE_START to the real start time (ISO 8601 with time zone) =====
+  var LIVE_START = '2026-11-19T20:00:00+08:00'; // [Placeholder date]
+  (function(){
+    var box = document.getElementById('countdown'), now = document.getElementById('liveNow');
+    var t0 = new Date(LIVE_START).getTime(), els = {};
+    box.querySelectorAll('b').forEach(function(b){ els[b.dataset.u] = b; });
+    function pad(n){ return (n<10?'0':'')+n; }
+    function tick(){
+      var diff = t0 - Date.now();
+      if (isNaN(t0) || diff <= 0) { box.hidden = true; now.hidden = false; return; }
+      var sec = Math.floor(diff/1000);
+      els.d.textContent = pad(Math.floor(sec/86400)); els.h.textContent = pad(Math.floor(sec%86400/3600));
+      els.m.textContent = pad(Math.floor(sec%3600/60)); els.s.textContent = pad(sec%60);
+      setTimeout(tick, 1000 - Date.now()%1000);
+    }
+    tick();
+  })();
+
+  // ===== SHARE (Web Share API, copy-link fallback) =====
+  var toast = document.getElementById('toast');
+  function say(msg){ toast.textContent = msg; toast.classList.add('show'); clearTimeout(say.t); say.t = setTimeout(function(){ toast.classList.remove('show'); }, 2200); }
+  document.querySelectorAll('.share').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var data = {title: document.title, text: 'Hand-painted Fengxiang clay sculptures — have a look:', url: location.href.split('#')[0]};
+      if (navigator.share) { navigator.share(data).catch(function(){}); return; }
+      var done = function(){ say('Link copied'); };
+      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(data.url).then(done, function(){ prompt('Copy this link:', data.url); });
+      else { var ta = document.createElement('textarea'); ta.value = data.url; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); done(); } catch(e) { prompt('Copy this link:', data.url); } ta.remove(); }
+    });
+  });
+
+  // #045 wipe reveals
+  var wipes = document.querySelectorAll('.wipe');
+  if (reduce || !('IntersectionObserver' in window)) wipes.forEach(function(e){ e.classList.add('in'); });
+  else { var wio = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); wio.unobserve(e.target);} }); }, {rootMargin:'0px 0px -15% 0px'}); wipes.forEach(function(e){ wio.observe(e); }); }
+
+  // #152 zoom on scroll / dolly (craft image)
+  var dolly = document.querySelector('[data-dolly]');
+  if (dolly && !reduce) {
+    var dTick = false;
+    var dollyFn = function(){ var r = dolly.parentElement.getBoundingClientRect();
+      var p = Math.min(1, Math.max(0, (innerHeight - r.top) / (innerHeight + r.height)));
+      dolly.style.transform = 'scale(' + (1.28 - 0.28*p).toFixed(3) + ') translateY(' + ((0.5-p)*4).toFixed(2) + '%)'; dTick = false; };
+    addEventListener('scroll', function(){ if(!dTick){ dTick = true; requestAnimationFrame(dollyFn); } }, {passive:true}); dollyFn();
+  }
+
+  if (fine && !reduce) {
+    // #154 spotlight: edges of nearby cards glow
+    grid.addEventListener('mousemove', function(e){
+      grid.querySelectorAll('.frame').forEach(function(f){ var r = f.getBoundingClientRect();
+        f.style.setProperty('--mx', (e.clientX - r.left) + 'px'); f.style.setProperty('--my', (e.clientY - r.top) + 'px'); });
+    });
+    grid.addEventListener('mouseleave', function(){ grid.querySelectorAll('.frame').forEach(function(f){ f.style.setProperty('--mx','-999px'); }); });
+    // #084 magnetic pull on gallery cards (subtle)
+    grid.querySelectorAll('.card').forEach(function(card){
+      card.addEventListener('mousemove', function(e){ var r = card.getBoundingClientRect();
+        card.style.transform = 'translate(' + ((e.clientX-r.left-r.width/2)*0.04).toFixed(1) + 'px,' + ((e.clientY-r.top-r.height/2)*0.04).toFixed(1) + 'px)'; });
+      card.addEventListener('mouseleave', function(){ card.style.transform = ''; });
+    });
+    grid.querySelectorAll('.card').forEach(function(c){ c.style.transition = 'transform .6s cubic-bezier(.22,1,.36,1), opacity .7s, translate .7s'; });
+  }
+
+  // #162 lightbox (shared-element open via FLIP ghost + #044 cross dissolve on next/prev)
+  var lb = document.getElementById('lb'), lbImg = lb.querySelector('img'), lbCap = lb.querySelector('figcaption'), cur = 0, lastFocus = null;
+  function show(i, fade){ cur = (i + pieces.length) % pieces.length; var p = pieces[cur];
+    lbImg.src = 'images/'+p.img; lbImg.alt = p.t; lbCap.innerHTML = p.t + '<span>'+(cur+1)+' / '+pieces.length+'</span>';
+    if (fade !== false && !reduce) { lbImg.classList.remove('dissolve'); void lbImg.offsetWidth; lbImg.classList.add('dissolve'); } }
+  function open(i){ lastFocus = document.activeElement; show(i, false);
+    var thumb = grid.querySelector('.frame[data-i="'+i+'"] img');
+    lb.classList.add('open'); lb.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; lb.querySelector('.x').focus();
+    if (reduce || !thumb) return;
+    var from = thumb.getBoundingClientRect(), g = new Image(); g.src = thumb.currentSrc || thumb.src; g.className = 'lb-ghost';
+    g.style.cssText = 'left:'+from.left+'px;top:'+from.top+'px;width:'+from.width+'px;height:'+from.height+'px';
+    document.body.appendChild(g); lbImg.style.opacity = 0;
+    var go = function(){ var to = lbImg.getBoundingClientRect();
+      if (!to.width) { to = {left: innerWidth*.1, top: innerHeight*.12, width: innerWidth*.8, height: innerHeight*.7}; }
+      requestAnimationFrame(function(){ g.style.left = to.left+'px'; g.style.top = to.top+'px'; g.style.width = to.width+'px'; g.style.height = to.height+'px'; g.style.objectFit = 'contain'; });
+      setTimeout(function(){ lbImg.style.opacity = ''; g.remove(); }, 520); };
+    if (lbImg.complete) setTimeout(go, 20); else lbImg.onload = function(){ lbImg.onload = null; go(); };
+  }
+  function close(){ lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); document.body.style.overflow=''; if(lastFocus) lastFocus.focus(); }
+  grid.addEventListener('click', function(e){ var f = e.target.closest('.frame'); if (f) open(+f.dataset.i); });
+  grid.addEventListener('keydown', function(e){ var f = e.target.closest('.frame'); if (f && (e.key==='Enter'||e.key===' ')) { e.preventDefault(); open(+f.dataset.i); } });
+  lb.querySelector('.x').onclick = close;
+  lb.querySelector('.prev').onclick = function(){ show(cur-1); };
+  lb.querySelector('.next').onclick = function(){ show(cur+1); };
+  lb.addEventListener('click', function(e){ if (e.target === lb) close(); });
+  addEventListener('keydown', function(e){ if(!lb.classList.contains('open')) return;
+    if(e.key==='Escape') close(); if(e.key==='ArrowLeft') show(cur-1); if(e.key==='ArrowRight') show(cur+1); });
+  var sx = null;
+  lb.addEventListener('touchstart', function(e){ sx = e.touches[0].clientX; }, {passive:true});
+  lb.addEventListener('touchend', function(e){ if(sx===null) return; var dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) show(cur + (dx<0?1:-1)); sx = null; });
+})();
+</script>
+</body>
+</html>
